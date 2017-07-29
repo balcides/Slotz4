@@ -29,6 +29,7 @@ public class TileTest : MonoBehaviour {
 
 	//internal
 	int ChildCount;
+	int SpinCount;
 	int LastTileCount;
 	Transform EndTile;
 	Transform FirstRow;
@@ -45,13 +46,14 @@ public class TileTest : MonoBehaviour {
 		UnitSpeed = 1;
 
 		ChildCount = 0;
+		SpinCount = 1;
 	}
 
 	// Use this for initialization
 	void Start () {
 		if(EnableTileCloneTest){	TileCloneTest();	}
 
-		BottomLine = new Vector3(TileParent.position.x,TileParent.position.y - (Unit * 2), TileParent.position.z);
+		BottomLine =  new Vector3(TileParent.position.x,TileParent.position.y - (Unit * 2), TileParent.position.z);
 
 		FirstRow = TileParent; //easier to rememeber
 		LastTileCount = FirstRow.transform.childCount;
@@ -96,21 +98,49 @@ public class TileTest : MonoBehaviour {
 		//RowTop
 		// top of the row is the last tile position y plus 1 unit, get length of row
 		//RowTop = FirstRow.transform.GetChild(LastTileCount - 1).position;
-		Vector3 RowTopAbove = new Vector3(RowTop.x, RowTop.y, RowTop.z);
+		Vector3 RowTopAbove = RowTop;
 
-		BottomLineOffset = BottomLine.y * 0.5f; 
-		EndTileOffset = EndTile.position.y * (ChildCount + 1);
+		BottomLineOffset = BottomLine.y * 0.5f; //bottom line is tile parent position
+		//EndTileOffset = EndTile.position.y * (ChildCount + 1);
+		EndTileOffset = EndTile.position.y * (SpinCount);
+
+		//print("--EndTileOffset: " + EndTileOffset);
+		//print("--BottomLine: " + BottomLineOffset);
+		//print("--BottomLineOffset: " + BottomLineOffset);
+		//print("--TileParent pos:\t " + TileParent.position);
 
 		//When the tiles move down 1 unit
 		if(EndTileOffset == BottomLineOffset){
-			print("=EndTileOffset: " + EndTileOffset);
-			print("=BottomLineOffset: " + BottomLineOffset);
+
 			EndTile.position = RowTopAbove;
+			SpinCount++;
 
 			//Reset
-			if(ChildCount < (LastTileCount - 1)){ 	ChildCount++; 	}
+			if(ChildCount < (LastTileCount - 1)){ 	
+				print("child count goes");
+				ChildCount++;
+				//BottomLine = new Vector3(BottomLine.x, BottomLine.y - (Unit * 2), BottomLine.z);
+			}
+			else{	
+				print("child count resets");
+				ChildCount = 0; 	
+			}
+			
 			EndTile = FirstRow.transform.GetChild(ChildCount);
 			BottomLine = new Vector3(BottomLine.x, BottomLine.y - (Unit * 2), BottomLine.z);
+
+			print("      \t\t\t\t\t\t\t\t\t\t\t\t\t ");
+			print("       °º¤ø,¸¸,ø¤º°`°º¤ø,¸      ");
+			print("=EndTileOffset: " + EndTileOffset);
+			print("=BottomLineOffset: " + BottomLineOffset);
+			//print("ChildCount: " + ChildCount);
+			//print("**EndTile: " + EndTile + EndTile.position);
+			//print("**BottomLine: " + BottomLine);
+			print("**SpinCount: " + SpinCount);
+
+			print("       °º¤ø,¸¸,ø¤º°`°º¤ø,¸      ");
+
+			//print("RowTop: " + RowTop);
 		}
 	}
 }
