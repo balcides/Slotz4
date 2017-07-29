@@ -96,7 +96,7 @@ public class TileTest : MonoBehaviour {
 		//RowTop
 		// top of the row is the last tile position y plus 1 unit, get length of row
 		//RowTop = FirstRow.transform.GetChild(LastTileCount - 1).position;
-		Vector3 RowTopAbove = new Vector3(RowTop.x, RowTop.y + (Unit * 2), RowTop.z);
+		Vector3 RowTopAbove = new Vector3(RowTop.x, RowTop.y, RowTop.z);
 
 		BottomLineOffset = BottomLine.y * 0.5f; 
 		EndTileOffset = EndTile.position.y * (ChildCount + 1);
