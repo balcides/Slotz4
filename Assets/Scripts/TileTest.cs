@@ -25,7 +25,9 @@ public class TileTest : MonoBehaviour {
 	public bool EnableAnimateRowTest;
 
 	public int Unit;
-	public int UnitSpeed;
+	public float UnitSpeed;
+
+	public int SpinCountBeforeStop;
 
 	//internal
 	int ChildCount;
@@ -34,6 +36,7 @@ public class TileTest : MonoBehaviour {
 	Transform EndTile;
 	Transform FirstRowX;
 	Vector3 RowTop;
+	public float UnitSpeedStart;
 
 	void Awake(){
 		TileParent = new GameObject("Example GO").transform;
@@ -43,10 +46,12 @@ public class TileTest : MonoBehaviour {
 
 		//Unit
 		Unit = 2000; 
-		UnitSpeed = 1;
+		UnitSpeed = 10;			//10 too fast, 5 too slow
+		UnitSpeedStart = UnitSpeed;
 
 		ChildCount = 0;
 		SpinCount = 1;
+		SpinCountBeforeStop = 50;
 	}
 
 	// Use this for initialization
@@ -68,7 +73,7 @@ public class TileTest : MonoBehaviour {
 		//Creates the first row X of tiles
 		for (int i = 0; i < TileXCount; i++){
 			Transform Clone;
-			Clone = Instantiate(TilePrefab, new Vector3(2000, 2000 + (4000 * i), 0), Quaternion.Euler(new Vector3(90, 0, 0)));
+			Clone = Instantiate(TilePrefab, new Vector3(2000, 2000 + (4000 * i), 100), Quaternion.Euler(new Vector3(90, 0, 0)));
 			Clone.parent = TileParent;
 		}
 
@@ -97,6 +102,9 @@ public class TileTest : MonoBehaviour {
 		BottomLineOffset = BottomLine.y * 0.5f; //bottom line is tile parent position
 		EndTileOffset = EndTile.position.y * (SpinCount);
 
+		print(SpinCount);
+		print(BottomLineOffset);
+		print(EndTileOffset);
 
 		//When the tiles move down 1 unit
 		if(EndTileOffset == BottomLineOffset){
@@ -110,6 +118,22 @@ public class TileTest : MonoBehaviour {
 			
 			EndTile = FirstRowX.transform.GetChild(ChildCount);
 			BottomLine = new Vector3(BottomLine.x, BottomLine.y - (Unit * 2), BottomLine.z);
+
+			if(SpinCount >= SpinCountBeforeStop){
+				// spin keeps on spinnin'
+				if( UnitSpeed < 2 ){	UnitSpeed = 0;		}
+				else{ UnitSpeed = UnitSpeed - (UnitSpeed * 0.25f); }
+			}
+			else{ //nothin
+			}
 		}
+	}
+
+	//sets enabled the anime row test
+	public void SetEnableAnimateRowTest(){
+		EnableAnimateRowTest = true;
+		UnitSpeed = UnitSpeedStart;
+		SpinCount = 1;
+		BottomLine =  new Vector3(TileParent.position.x,TileParent.position.y - (Unit * 2), TileParent.position.z);
 	}
 }
