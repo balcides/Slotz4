@@ -32,7 +32,7 @@ public class TileTest : MonoBehaviour {
 	int SpinCount;
 	int LastTileCount;
 	Transform EndTile;
-	Transform FirstRow;
+	Transform FirstRowX;
 	Vector3 RowTop;
 
 	void Awake(){
@@ -54,10 +54,9 @@ public class TileTest : MonoBehaviour {
 		if(EnableTileCloneTest){	TileCloneTest();	}
 
 		BottomLine =  new Vector3(TileParent.position.x,TileParent.position.y - (Unit * 2), TileParent.position.z);
-
-		FirstRow = TileParent; //easier to rememeber
-		LastTileCount = FirstRow.transform.childCount;
-		RowTop = FirstRow.transform.GetChild(LastTileCount - 1).position;
+		FirstRowX = TileParent; //easier to rememeber
+		LastTileCount = FirstRowX.transform.childCount;
+		RowTop = FirstRowX.transform.GetChild(LastTileCount - 1).position;
 	}
 	
 	// Update is called once per frame
@@ -83,64 +82,34 @@ public class TileTest : MonoBehaviour {
 	}
 		
 	public void AnimateRowTest(){
-
-		//take the FIRST ROW 
-		FirstRow = TileParent;
+		//take the FIRST ROW X
+		FirstRowX = TileParent;
 
 		//MOVE IT down by 1 UNIT (whatever that is (Target is one unit down from current pos)
 		float Step = UnitSpeed * Time.deltaTime * (Unit * 2);
-		FirstRow.position = Vector3.MoveTowards(FirstRow.position, BottomLine, Step);
+		FirstRowX.position = Vector3.MoveTowards(FirstRowX.position, BottomLine, Step);
 
 		//and then take the TILE AT THE END and MOVE IT to the TOP OF THE ROW
-		EndTile = FirstRow.transform.GetChild(ChildCount);
-		EndTile.gameObject.GetComponent<Renderer>().material.color = Color.red;
+		EndTile = FirstRowX.transform.GetChild(ChildCount);
+		//EndTile.gameObject.GetComponent<Renderer>().material.color = Color.red;
 
-		//RowTop
-		// top of the row is the last tile position y plus 1 unit, get length of row
-		//RowTop = FirstRow.transform.GetChild(LastTileCount - 1).position;
-		Vector3 RowTopAbove = RowTop;
-
+		//RowTop - top of the row is the last tile position y plus 1 unit, get length of row
 		BottomLineOffset = BottomLine.y * 0.5f; //bottom line is tile parent position
-		//EndTileOffset = EndTile.position.y * (ChildCount + 1);
 		EndTileOffset = EndTile.position.y * (SpinCount);
 
-		//print("--EndTileOffset: " + EndTileOffset);
-		//print("--BottomLine: " + BottomLineOffset);
-		//print("--BottomLineOffset: " + BottomLineOffset);
-		//print("--TileParent pos:\t " + TileParent.position);
 
 		//When the tiles move down 1 unit
 		if(EndTileOffset == BottomLineOffset){
 
-			EndTile.position = RowTopAbove;
+			EndTile.position = RowTop;
 			SpinCount++;
 
 			//Reset
-			if(ChildCount < (LastTileCount - 1)){ 	
-				print("child count goes");
-				ChildCount++;
-				//BottomLine = new Vector3(BottomLine.x, BottomLine.y - (Unit * 2), BottomLine.z);
-			}
-			else{	
-				print("child count resets");
-				ChildCount = 0; 	
-			}
+			if(ChildCount < (LastTileCount - 1)){ 	ChildCount++; }
+			else{	ChildCount = 0;  }
 			
-			EndTile = FirstRow.transform.GetChild(ChildCount);
+			EndTile = FirstRowX.transform.GetChild(ChildCount);
 			BottomLine = new Vector3(BottomLine.x, BottomLine.y - (Unit * 2), BottomLine.z);
-
-			print("      \t\t\t\t\t\t\t\t\t\t\t\t\t ");
-			print("       °º¤ø,¸¸,ø¤º°`°º¤ø,¸      ");
-			print("=EndTileOffset: " + EndTileOffset);
-			print("=BottomLineOffset: " + BottomLineOffset);
-			//print("ChildCount: " + ChildCount);
-			//print("**EndTile: " + EndTile + EndTile.position);
-			//print("**BottomLine: " + BottomLine);
-			print("**SpinCount: " + SpinCount);
-
-			print("       °º¤ø,¸¸,ø¤º°`°º¤ø,¸      ");
-
-			//print("RowTop: " + RowTop);
 		}
 	}
 }
