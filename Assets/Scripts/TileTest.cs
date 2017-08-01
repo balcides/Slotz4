@@ -14,10 +14,12 @@ public class TileTest : MonoBehaviour {
 
 	public Transform TilePrefab;
 	public Transform TileParent;
+	Vector3 TileParentStart;
 	public Transform TileMasterParent;
 	public int TileXCount;
 	public int TileYCount;
 	Vector3 BottomLine;
+	Vector3 BottomLineStart;
 	float BottomLineOffset;
 	float EndTileOffset;
 
@@ -37,6 +39,7 @@ public class TileTest : MonoBehaviour {
 	Transform FirstRowX;
 	Vector3 RowTop;
 	public float UnitSpeedStart;
+	Vector3[] TileXPositions;
 
 	void Awake(){
 		TileParent = new GameObject("Example GO").transform;
@@ -46,22 +49,29 @@ public class TileTest : MonoBehaviour {
 
 		//Unit
 		Unit = 2000; 
-		UnitSpeed = 10;			//10 too fast, 5 too slow
+		UnitSpeed = 5;			//10 too fast, 5 too slow
 		UnitSpeedStart = UnitSpeed;
 
 		ChildCount = 0;
 		SpinCount = 1;
-		SpinCountBeforeStop = 50;
+		SpinCountBeforeStop = 20;
 	}
 
 	// Use this for initialization
 	void Start () {
 		if(EnableTileCloneTest){	TileCloneTest();	}
-
+			
 		BottomLine =  new Vector3(TileParent.position.x,TileParent.position.y - (Unit * 2), TileParent.position.z);
+		BottomLineStart = BottomLine;
 		FirstRowX = TileParent; //easier to rememeber
 		LastTileCount = FirstRowX.transform.childCount;
 		RowTop = FirstRowX.transform.GetChild(LastTileCount - 1).position;
+		TileParentStart = TileParent.position;
+		TileXPositions = new Vector3[LastTileCount];
+		GetTilePositions();
+		print("BottomLineStart=" + BottomLineStart);
+		//print("TileParentStart=" + TileParentStart.y);
+		//print("TileXPositions=" + TileXPositions);
 	}
 	
 	// Update is called once per frame
@@ -93,23 +103,29 @@ public class TileTest : MonoBehaviour {
 		//MOVE IT down by 1 UNIT (whatever that is (Target is one unit down from current pos)
 		float Step = UnitSpeed * Time.deltaTime * (Unit * 2);
 		FirstRowX.position = Vector3.MoveTowards(FirstRowX.position, BottomLine, Step);
+		//print("FirstRowX.position=" + FirstRowX.position);
+		//print("BottomLine=" + BottomLine);
 
 		//and then take the TILE AT THE END and MOVE IT to the TOP OF THE ROW
 		EndTile = FirstRowX.transform.GetChild(ChildCount);
 		//EndTile.gameObject.GetComponent<Renderer>().material.color = Color.red;
+		print("EndTile.position.y" + EndTile.position.y);
 
 		//RowTop - top of the row is the last tile position y plus 1 unit, get length of row
 		BottomLineOffset = BottomLine.y * 0.5f; //bottom line is tile parent position
 		EndTileOffset = EndTile.position.y * (SpinCount);
 
-		print(SpinCount);
-		print(BottomLineOffset);
-		print(EndTileOffset);
+		//print("Spin count =" + SpinCount);
+		print("BottomLineOffset =" + BottomLineOffset);
+		print("endTileOffset =" + EndTileOffset);
+		//print("Spin Count =" + SpinCount);
 
 		//When the tiles move down 1 unit
 		if(EndTileOffset == BottomLineOffset){
-
+			print("one cycle happening");
 			EndTile.position = RowTop;
+
+			print("RowTop=" + RowTop);
 			SpinCount++;
 
 			//Reset
@@ -121,7 +137,9 @@ public class TileTest : MonoBehaviour {
 
 			if(SpinCount >= SpinCountBeforeStop){
 				// spin keeps on spinnin'
-				if( UnitSpeed < 2 ){	UnitSpeed = 0;		}
+				if( UnitSpeed < 2 ){   
+					UnitSpeed = 0;		 
+					EnableAnimateRowTest = false;}
 				else{ UnitSpeed = UnitSpeed - (UnitSpeed * 0.25f); }
 			}
 			else{ //nothin
@@ -131,9 +149,36 @@ public class TileTest : MonoBehaviour {
 
 	//sets enabled the anime row test
 	public void SetEnableAnimateRowTest(){
+		print("SPIN BUTTON PRESSED========================================");
 		EnableAnimateRowTest = true;
 		UnitSpeed = UnitSpeedStart;
 		SpinCount = 1;
-		BottomLine =  new Vector3(TileParent.position.x,TileParent.position.y - (Unit * 2), TileParent.position.z);
+		ChildCount = 0;
+		TileParent.position = TileParentStart;
+		FirstRowX.position = TileParentStart;
+		SetTilePositions();
+		RowTop = TileParent.transform.GetChild(LastTileCount - 1).position;
+		BottomLine = new Vector3(TileParent.position.x,TileParent.position.y - (Unit * 2), TileParent.position.z);
+		//print("TileParent=" + TileParent.position.y);
+		//print("BottomLine=" + BottomLine);
+
+
+	}
+
+	//saves the default positions of tiles on start
+	public void GetTilePositions(){
+		for(int i = 0;  i < (LastTileCount); i++ ){ 
+			Vector3 TileX = FirstRowX.transform.GetChild(i).position;
+			TileXPositions[i] = new Vector3(TileX.x, TileX.y, TileX.z); 
+			//print(TileXPositions[i]);
+			}
+	}
+
+	//sets the tile positions back to default
+	public void SetTilePositions(){
+		for(int i = 0;  i < (LastTileCount); i++ ){ 
+			FirstRowX.transform.GetChild(i).position = TileXPositions[i];
+			//print(TileXPositions[i]);
+		}
 	}
 }
