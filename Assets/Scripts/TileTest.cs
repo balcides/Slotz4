@@ -40,6 +40,7 @@ public class TileTest : MonoBehaviour {
 	Vector3 RowTop;
 	public float UnitSpeedStart;
 	Vector3[] TileXPositions;
+	bool disableSpinButton;
 
 	void Awake(){
 		TileParent = new GameObject("Example GO").transform;
@@ -49,12 +50,12 @@ public class TileTest : MonoBehaviour {
 
 		//Unit
 		Unit = 2000; 
-		UnitSpeed = 5;			//10 too fast, 5 too slow
+		UnitSpeed = 10;			//10 too fast, 5 too slow
 		UnitSpeedStart = UnitSpeed;
 
 		ChildCount = 0;
 		SpinCount = 1;
-		SpinCountBeforeStop = 20;
+		SpinCountBeforeStop = 50;
 	}
 
 	// Use this for initialization
@@ -69,7 +70,9 @@ public class TileTest : MonoBehaviour {
 		TileParentStart = TileParent.position;
 		TileXPositions = new Vector3[LastTileCount];
 		GetTilePositions();
-		print("BottomLineStart=" + BottomLineStart);
+		//print("BottomLineStart=" + BottomLineStart);
+		disableSpinButton = false;
+			
 		//print("TileParentStart=" + TileParentStart.y);
 		//print("TileXPositions=" + TileXPositions);
 	}
@@ -109,23 +112,23 @@ public class TileTest : MonoBehaviour {
 		//and then take the TILE AT THE END and MOVE IT to the TOP OF THE ROW
 		EndTile = FirstRowX.transform.GetChild(ChildCount);
 		//EndTile.gameObject.GetComponent<Renderer>().material.color = Color.red;
-		print("EndTile.position.y" + EndTile.position.y);
+		//print("EndTile.position.y" + EndTile.position.y);
 
 		//RowTop - top of the row is the last tile position y plus 1 unit, get length of row
 		BottomLineOffset = BottomLine.y * 0.5f; //bottom line is tile parent position
 		EndTileOffset = EndTile.position.y * (SpinCount);
 
 		//print("Spin count =" + SpinCount);
-		print("BottomLineOffset =" + BottomLineOffset);
-		print("endTileOffset =" + EndTileOffset);
+		//print("BottomLineOffset =" + BottomLineOffset);
+		//print("endTileOffset =" + EndTileOffset);
 		//print("Spin Count =" + SpinCount);
 
 		//When the tiles move down 1 unit
 		if(EndTileOffset == BottomLineOffset){
-			print("one cycle happening");
+			//print("one cycle happening");
 			EndTile.position = RowTop;
 
-			print("RowTop=" + RowTop);
+			//print("RowTop=" + RowTop);
 			SpinCount++;
 
 			//Reset
@@ -139,30 +142,35 @@ public class TileTest : MonoBehaviour {
 				// spin keeps on spinnin'
 				if( UnitSpeed < 2 ){   
 					UnitSpeed = 0;		 
-					EnableAnimateRowTest = false;}
-				else{ UnitSpeed = UnitSpeed - (UnitSpeed * 0.25f); }
+					EnableAnimateRowTest = false;
+					disableSpinButton = false;}
+				else{ 
+					UnitSpeed = UnitSpeed - (UnitSpeed * 0.25f);}
 			}
 			else{ //nothin
 			}
 		}
 	}
 
-	//sets enabled the anime row test
+	//sets enabled the anime row test and resets the spin
 	public void SetEnableAnimateRowTest(){
-		print("SPIN BUTTON PRESSED========================================");
-		EnableAnimateRowTest = true;
-		UnitSpeed = UnitSpeedStart;
-		SpinCount = 1;
-		ChildCount = 0;
-		TileParent.position = TileParentStart;
-		FirstRowX.position = TileParentStart;
-		SetTilePositions();
-		RowTop = TileParent.transform.GetChild(LastTileCount - 1).position;
-		BottomLine = new Vector3(TileParent.position.x,TileParent.position.y - (Unit * 2), TileParent.position.z);
+		if (disableSpinButton){}
+		else{
+			print("SPIN BUTTON PRESSED========================================");
+			EnableAnimateRowTest = true;
+			UnitSpeed = UnitSpeedStart;
+			SpinCount = 1;
+			ChildCount = 0;
+			TileParent.position = TileParentStart;
+			FirstRowX.position = TileParentStart;
+			SetTilePositions();
+			RowTop = TileParent.transform.GetChild(LastTileCount - 1).position;
+			BottomLine = new Vector3(TileParent.position.x,TileParent.position.y - (Unit * 2), TileParent.position.z);
+			disableSpinButton = true;
+		}
+			
 		//print("TileParent=" + TileParent.position.y);
 		//print("BottomLine=" + BottomLine);
-
-
 	}
 
 	//saves the default positions of tiles on start
