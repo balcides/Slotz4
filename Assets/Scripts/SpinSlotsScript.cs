@@ -4,13 +4,13 @@ using UnityEngine;
 
 /// <summary>
 /// 
-/// 	TileScript.cs
+/// 	SpinSlotsScript.cs
 /// 	Experiment to get tiling tiles working a basic 
 /// 	fundamental in gaming needed for multiple games.
 /// 
 /// </summary>
 
-public class TileTest : MonoBehaviour {
+public class SpinSlotsScript : MonoBehaviour {
 
 	public Transform TilePrefab;
 	public Transform TileMasterParent;
@@ -19,7 +19,7 @@ public class TileTest : MonoBehaviour {
 	public int Unit;
 	public int SpinCountBeforeStop;
 	public bool EnableTileCloneTest;
-	public bool EnableSpinRowTest;
+	public bool EnableSpinSlotTest;
 	public float UnitSpeed;
 	public float UnitSpeedStart;
 
@@ -69,7 +69,7 @@ public class TileTest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(EnableSpinRowTest){	SpinRowTest();	}
+		if(EnableSpinSlotTest){	SpinSlotTest();	}
 	}
 
 	public void TileCloneTest(){
@@ -89,7 +89,7 @@ public class TileTest : MonoBehaviour {
 		}
 	}
 		
-	public void SpinRowTest(){
+	public void SpinSlotTest(){
 		//take the FIRST ROW X
 		//FirstRowX = FirstRowX;
 
@@ -121,7 +121,7 @@ public class TileTest : MonoBehaviour {
 				//spin stops, reset
 				if( UnitSpeed < 2 ){   
 					UnitSpeed = 0;		 
-					EnableSpinRowTest = false;
+					EnableSpinSlotTest = false;
 					disableSpinButton = false;}
 				else{ 
 					// spin keeps on spinnin'
@@ -133,11 +133,11 @@ public class TileTest : MonoBehaviour {
 	}
 
 	//sets enabled the anime row test and resets the spin
-	public void SetEnableSpinRowTest(){
+	public void RunSpinSlot(){
 		if (disableSpinButton){}
 		else{
 			print("SPIN BUTTON PRESSED========================================");
-			EnableSpinRowTest = true;
+			EnableSpinSlotTest = true;
 			UnitSpeed = UnitSpeedStart;
 			SpinCount = 1;
 			ChildCount = 0;
