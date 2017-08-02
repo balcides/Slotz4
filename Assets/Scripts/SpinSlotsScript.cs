@@ -78,7 +78,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(EnableSpinSlotTest){	
-			SpinSlotTest(YRow[1]);
+			SpinSlotTest(YRow[0]);
 		}
 	}
 
@@ -152,7 +152,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		if (disableSpinButton){}
 		else{
 			print("SPIN BUTTON PRESSED========================================");
-			ResetVarsBeforeSpin(YRow[1]);
+			ResetVarsBeforeSpin(YRow[0]);
 		}
 	}
 
