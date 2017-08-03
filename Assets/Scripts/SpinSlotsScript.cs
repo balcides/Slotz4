@@ -39,6 +39,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	Vector3[] TileXPositions;
 	bool EnableSpinSlotTest;
 	bool disableSpinButton;
+	Transform TempRow;
 
 	//get an array to store all the y parents
 	//then a series of arrays for the x's
@@ -70,15 +71,16 @@ public class SpinSlotsScript : MonoBehaviour {
 		RowTop = TileFirstRowParent.transform.GetChild(LastTileCount - 1).position.y;
 		TileParentStart = TileFirstRowParent.position;
 		TileXPositions = new Vector3[LastTileCount];
-		GetTilePositions();
 		disableSpinButton = false;
 		SetYRowTransform();
+		TempRow = YRow[3];
+		GetTilePositions(TempRow);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(EnableSpinSlotTest){	
-			SpinSlotTest(YRow[0]);
+			SpinSlotTest( TempRow );
 		}
 	}
 
@@ -123,6 +125,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		if(EndTileOffset == BottomLineOffset){
 			EndTile.position = new Vector3(EndTile.position.x, RowTop, EndTile.position.z);
 			SpinCount++;
+			print(SpinCount);
 
 			//Reset spin
 			if(ChildCount < (LastTileCount - 1)){ 	ChildCount++; }
@@ -152,7 +155,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		if (disableSpinButton){}
 		else{
 			print("SPIN BUTTON PRESSED========================================");
-			ResetVarsBeforeSpin(YRow[0]);
+			ResetVarsBeforeSpin( TempRow );
 		}
 	}
 
@@ -162,27 +165,28 @@ public class SpinSlotsScript : MonoBehaviour {
 		UnitSpeed = UnitSpeedStart;
 		SpinCount = 1;
 		ChildCount = 0;
-		TileFirstRowParent.position = TileParentStart;
-		SetTilePositions();
-		RowTop = SlotRow.transform.GetChild(LastTileCount - 1).position.y;
+		SlotRow.position = new Vector3(SlotRow.position.x, TileParentStart.y, SlotRow.position.z);
+		SetTilePositions(TempRow);
 		BottomLine = SlotRow.position.y - (Unit * 2);
 		disableSpinButton = true;
 	}
 
 	//saves the default positions of tiles on start
-	void GetTilePositions(){
+	void GetTilePositions(Transform SlotRow){
+		//default was TileFirstRowParent for SlotRow
 		for(int i = 0;  i < (LastTileCount); i++ ){ 
-			Vector3 TileX = TileFirstRowParent.transform.GetChild(i).position;
+			Vector3 TileX = SlotRow.transform.GetChild(i).position;
 			TileXPositions[i] = new Vector3(TileX.x, TileX.y, TileX.z); 
 			}
 	}
 		
 	//sets the tile positions back to default
-	void SetTilePositions(){
-		for(int i = 0;  i < (LastTileCount); i++ ){  TileFirstRowParent.transform.GetChild(i).position = TileXPositions[i]; }
+	void SetTilePositions(Transform SlotRow ){
+		//default was TileFirstRowParent for SlotRow
+		for(int i = 0;  i < (LastTileCount); i++ ){  SlotRow.transform.GetChild(i).position = TileXPositions[i]; }
 	}
 		
-	//get the master parent and Y rows for children
+	//gets and renames the master parent and Y rows for children 
 	void SetYRowTransform(){
 		for(int i = 0;  i < (TileYCount); i++ ){  
 			YRow[i] = TileMasterParent.transform.GetChild(i);
