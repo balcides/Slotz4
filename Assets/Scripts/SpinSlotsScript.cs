@@ -21,14 +21,14 @@ public class SpinSlotsScript : MonoBehaviour {
 	public int SpinCountBeforeStop;
 	public bool EnableCloneTileTest;
 	public float UnitSpeed;
-	public float UnitSpeedStart;
 
 	Vector3 TileParentStart;
-	Vector3 BottomLine;
+	float BottomLine;
 	float BottomLineOffset;
 	float EndTileOffset;
+	float UnitSpeedStart;
 
-	//internal
+	//Internal
 	int ChildCount;
 	int SpinCount;
 	int LastTileCount;
@@ -65,7 +65,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	void Start () {
 		if(EnableCloneTileTest){	CreateTileGridTransform();	}
 		//Order Matters	
-		BottomLine =  new Vector3(TileFirstRowParent.position.x,TileFirstRowParent.position.y - (Unit * 2), TileFirstRowParent.position.z);
+		BottomLine =  TileFirstRowParent.position.y - (Unit * 2);
 		LastTileCount = TileFirstRowParent.transform.childCount;
 		RowTop = TileFirstRowParent.transform.GetChild(LastTileCount - 1).position;
 		TileParentStart = TileFirstRowParent.position;
@@ -110,13 +110,13 @@ public class SpinSlotsScript : MonoBehaviour {
 
 		//MOVE IT down by 1 UNIT (whatever that is (Target is one unit down from current pos)
 		float Step = UnitSpeed * Time.deltaTime * (Unit * 2);
-		SlotRow.position = Vector3.MoveTowards(SlotRow.position, BottomLine, Step);
+		SlotRow.position = Vector3.MoveTowards(SlotRow.position,new Vector3(SlotRow.position.x ,BottomLine, SlotRow.position.z), Step);
 
 		//and then take the TILE AT THE END and MOVE IT to the TOP OF THE ROW
 		EndTile = SlotRow.transform.GetChild(ChildCount);
 
 		//RowTop - top of the row is the last tile position y plus 1 unit, get length of row
-		BottomLineOffset = BottomLine.y * 0.5f; 			//bottom line is tile parent position
+		BottomLineOffset = BottomLine * 0.5f; 			//bottom line is tile parent position
 		EndTileOffset = EndTile.position.y * (SpinCount);
 
 		//When the tiles move down 1 unit
@@ -129,7 +129,7 @@ public class SpinSlotsScript : MonoBehaviour {
 			else{	ChildCount = 0;  }
 			
 			EndTile = SlotRow.transform.GetChild(ChildCount);
-			BottomLine = new Vector3( SlotRow.position.x,  SlotRow.position.y - (Unit * 2),  SlotRow.position.z);
+			BottomLine = SlotRow.position.y - (Unit * 2);
 
 			if(SpinCount >= SpinCountBeforeStop){
 				
@@ -165,7 +165,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		TileFirstRowParent.position = TileParentStart;
 		SetTilePositions();
 		RowTop = SlotRow.transform.GetChild(LastTileCount - 1).position;
-		BottomLine = new Vector3(SlotRow.position.x,SlotRow.position.y - (Unit * 2), SlotRow.position.z);
+		BottomLine = SlotRow.position.y - (Unit * 2);
 		disableSpinButton = true;
 	}
 
