@@ -35,7 +35,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	Transform EndTile;
 	Transform FirstRowX;
 	Transform[] YRow;
-	Vector3 RowTop; 
+	float RowTop; 
 	Vector3[] TileXPositions;
 	bool EnableSpinSlotTest;
 	bool disableSpinButton;
@@ -67,7 +67,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		//Order Matters	
 		BottomLine =  TileFirstRowParent.position.y - (Unit * 2);
 		LastTileCount = TileFirstRowParent.transform.childCount;
-		RowTop = TileFirstRowParent.transform.GetChild(LastTileCount - 1).position;
+		RowTop = TileFirstRowParent.transform.GetChild(LastTileCount - 1).position.y;
 		TileParentStart = TileFirstRowParent.position;
 		TileXPositions = new Vector3[LastTileCount];
 		GetTilePositions();
@@ -121,7 +121,7 @@ public class SpinSlotsScript : MonoBehaviour {
 
 		//When the tiles move down 1 unit
 		if(EndTileOffset == BottomLineOffset){
-			EndTile.position = new Vector3(EndTile.position.x, RowTop.y, EndTile.position.z);
+			EndTile.position = new Vector3(EndTile.position.x, RowTop, EndTile.position.z);
 			SpinCount++;
 
 			//Reset spin
@@ -164,7 +164,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		ChildCount = 0;
 		TileFirstRowParent.position = TileParentStart;
 		SetTilePositions();
-		RowTop = SlotRow.transform.GetChild(LastTileCount - 1).position;
+		RowTop = SlotRow.transform.GetChild(LastTileCount - 1).position.y;
 		BottomLine = SlotRow.position.y - (Unit * 2);
 		disableSpinButton = true;
 	}
