@@ -24,9 +24,6 @@ public class SpinSlotsScript : MonoBehaviour {
 
 	//Pre-internal
 	Vector3 TileFirstRowParentStart;
-	float BottomLine;
-	float BottomLineOffset;
-	float EndTileOffset;
 	float UnitSpeedStart;
 	float[] BottomLinez;
 	float[] BottomLineOffsetz;
@@ -38,7 +35,6 @@ public class SpinSlotsScript : MonoBehaviour {
 	Transform FirstRowX;
 	Transform[] YRow;
 	Transform[] EndTilez;
-	float CountTest;
 	float[] RowTopz;
 	Vector3[,] TileXYPos;
 	bool EnableSpinSlotTest;
@@ -75,10 +71,8 @@ public class SpinSlotsScript : MonoBehaviour {
 		if(EnableCloneTileTest){	CreateTileGridTransform();	}
 
 		//Order Matters	
-		BottomLine =  TileFirstRowParent.position.y - (Unit * 2);
-
-		for (int i = 0; i < TileYCount; i++){ BottomLinez[i] = BottomLine; } 		// fill bottom lines
-		for (int i = 0; i < TileYCount; i++){ RowTopz[i] = TileFirstRowParent.transform.GetChild(TileXCount - 1).position.y; } 		// fill bottom lines
+		for (int i = 0; i < TileYCount; i++){ BottomLinez[i] =  TileFirstRowParent.position.y - (Unit * 2); } 						// fill bottom lines
+		for (int i = 0; i < TileYCount; i++){ RowTopz[i] = TileFirstRowParent.transform.GetChild(TileXCount - 1).position.y; } 		// fill row top lines
 
 		TileFirstRowParentStart = TileFirstRowParent.position;
 		TileXYPos = new Vector3[TileXCount,TileYCount];
@@ -174,7 +168,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	}
 
 
-	//sets enabled the anime row test and resets the spin
+	//sets enabled the anime row test and resets the spin, it's what the button calls
 	public void RunSlotSpin(){
 		if (disableSpinButton){}
 		else{
@@ -193,7 +187,6 @@ public class SpinSlotsScript : MonoBehaviour {
 			ChildCountz[i] = 0; 
 			slotRow[i].position = new Vector3(slotRow[i].position.x, TileFirstRowParentStart.y, slotRow[i].position.z);
 			SetTileXYPositions();
-			BottomLine = slotRow[i].position.y - (Unit * 2); //working one
 			BottomLinez[i] = slotRow[i].position.y - (Unit * 2);
 			disableSpinButton = true;
 		}
