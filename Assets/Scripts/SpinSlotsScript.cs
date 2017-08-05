@@ -33,18 +33,13 @@ public class SpinSlotsScript : MonoBehaviour {
 	float[] EndTileOffsetz;
 
 	//Internal
-	int LastTileCount;
 	int[] ChildCountz;
 	int[] SpinCountz;
-	Transform EndTile;
-	Transform EndTile2;
-	Transform EndTile3;
 	Transform FirstRowX;
 	Transform[] YRow;
 	Transform[] EndTilez;
 	float CountTest;
 	float[] RowTopz;
-	Vector3[] TileXPositions;
 	Vector3[,] TileXYPos;
 	bool EnableSpinSlotTest;
 	bool disableSpinButton;
@@ -81,16 +76,15 @@ public class SpinSlotsScript : MonoBehaviour {
 
 		//Order Matters	
 		BottomLine =  TileFirstRowParent.position.y - (Unit * 2);
-		for (int i = 0; i < TileYCount; i++){ BottomLinez[i] = BottomLine; } 		// fill bottom lines
 
-		LastTileCount = TileFirstRowParent.transform.childCount;
-		for (int i = 0; i < TileYCount; i++){ RowTopz[i] = TileFirstRowParent.transform.GetChild(LastTileCount - 1).position.y; } 		// fill bottom lines
+		for (int i = 0; i < TileYCount; i++){ BottomLinez[i] = BottomLine; } 		// fill bottom lines
+		for (int i = 0; i < TileYCount; i++){ RowTopz[i] = TileFirstRowParent.transform.GetChild(TileXCount - 1).position.y; } 		// fill bottom lines
+
 		TileFirstRowParentStart = TileFirstRowParent.position;
-		TileXPositions = new Vector3[LastTileCount];
 		TileXYPos = new Vector3[TileXCount,TileYCount];
 		disableSpinButton = false;
-		SetYRowTransform();
 		GetTileXYPositions();
+
 		for (int i = 0; i < TileYCount; i++){ SpinCountz[i] = 1; } 
 		for (int i = 0; i < TileYCount; i++){ ChildCountz[i] = 0; } 
 	}
@@ -98,7 +92,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(EnableSpinSlotTest){	
-			
+
 			SpinSlotTest(0);
 			SpinSlotTest(1);
 			SpinSlotTest(2);
@@ -132,7 +126,8 @@ public class SpinSlotsScript : MonoBehaviour {
 			YClone.parent = TileMasterParent;
 		}
 	}
-		
+
+
 	//Core Spin slot mechanic
 	public void SpinSlotTest(int i = 0){
 		//wonder if better to use the loop in this or outside of this?
@@ -156,7 +151,7 @@ public class SpinSlotsScript : MonoBehaviour {
 			SpinCountz[i]++;
 
 			//Reset spin
-			if(ChildCountz[i] < (LastTileCount - 1)){ 	ChildCountz[i]++; }
+			if(ChildCountz[i] < (TileXCount - 1)){ 	ChildCountz[i]++; }
 			else{	ChildCountz[i] = 0;  }
 
 			EndTilez[i] = YRow[i].transform.GetChild(ChildCountz[i]);
@@ -204,20 +199,20 @@ public class SpinSlotsScript : MonoBehaviour {
 		}
 
 	}
-		
+
+
 	//saves the default positions of ALL tiles on start
 	void GetTileXYPositions(){
-		Transform tileY;
 		Vector3 tileX; 
 
 		//default was TileFirstRowParent for SlotRow
 		for(int i = 0;  i < (TileYCount); i++ ){ 
-			
-			tileY = TileMasterParent.transform.GetChild(i);
+			YRow[i] = TileMasterParent.transform.GetChild(i);
+			YRow[i].name = "TileRow" + i;
 
 			//how do you get all the slow rows
 			for(int j = 0;  j < (TileXCount); j++ ){
-				tileX = tileY.transform.GetChild(j).position;
+				tileX = YRow[i].transform.GetChild(j).position;
 				TileXYPos[j,i] = new Vector3(tileX.x, tileX.y, tileX.z); 
 			}
 		}
@@ -226,28 +221,16 @@ public class SpinSlotsScript : MonoBehaviour {
 
 	//sets the tile positions for ALL back to default
 	void SetTileXYPositions(){
-		Transform yRow;
 		Transform tileX; 
 
 		for(int i = 0;  i < (TileYCount); i++ ){ 
-			yRow = TileMasterParent.transform.GetChild(i);
 			YRow[i].position = new Vector3(YRow[i].position.x, TileFirstRowParentStart.y,YRow[i].position.z);
 
 			for(int j = 0;  j < (TileXCount); j++ ){ 
-				tileX = yRow.transform.GetChild(j);
+				tileX = YRow[i].transform.GetChild(j);
 				tileX.position = TileXYPos[j,i];
 			}
 		}
 	}
-
-
-	//gets and renames the master parent and Y rows for children 
-	void SetYRowTransform(){
-		for(int i = 0;  i < (TileYCount); i++ ){  
-			YRow[i] = TileMasterParent.transform.GetChild(i);
-			YRow[i].name = "TileRow" + i;
-		}
-	}
-
 	//END OF LINE
 }
