@@ -22,36 +22,32 @@ public class SpinSlotsScript : MonoBehaviour {
 	public bool EnableCloneTileTest;
 	public float UnitSpeed;
 
-	//pre-internal
+	//Pre-internal
 	Vector3 TileFirstRowParentStart;
 	float BottomLine;
-	float[] BottomLinez;
 	float BottomLineOffset;
-	float[] BottomLineOffsetz;
 	float EndTileOffset;
-	//float EndTileOffset2;
-	//float EndTileOffset3;
-	float[] EndTileOffsetz;
 	float UnitSpeedStart;
+	float[] BottomLinez;
+	float[] BottomLineOffsetz;
+	float[] EndTileOffsetz;
 
 	//Internal
-
+	int LastTileCount;
 	int[] ChildCountz;
 	int[] SpinCountz;
-	int LastTileCount;
 	Transform EndTile;
 	Transform EndTile2;
 	Transform EndTile3;
-	Transform[] EndTilez;
 	Transform FirstRowX;
 	Transform[] YRow;
+	Transform[] EndTilez;
+	float CountTest;
 	float[] RowTopz;
 	Vector3[] TileXPositions;
 	Vector3[,] TileXYPos;
 	bool EnableSpinSlotTest;
 	bool disableSpinButton;
-	float CountTest;
-	//Transform TempRow;
 
 	//get an array to store all the y parents
 	//then a series of arrays for the x's
@@ -62,15 +58,14 @@ public class SpinSlotsScript : MonoBehaviour {
 		//Unit
 		Unit = 2000; 
 		UnitSpeed = 10;					//10 too fast, 5 too slow
+
 		UnitSpeedStart = UnitSpeed;
-
 		SpinCountBeforeStop = 50;
-
-		YRow = new Transform[TileYCount];
 
 		TileFirstRowParent = new GameObject("Example GO").transform;
 		TileMasterParent = new GameObject("Example GO Master").transform;
 
+		YRow = new Transform[TileYCount];
 		EndTilez = new Transform[TileYCount];
 		EndTileOffsetz = new float[TileYCount];
 		BottomLinez = new float[TileYCount];
@@ -83,9 +78,9 @@ public class SpinSlotsScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		if(EnableCloneTileTest){	CreateTileGridTransform();	}
+
 		//Order Matters	
 		BottomLine =  TileFirstRowParent.position.y - (Unit * 2);
-
 		for (int i = 0; i < TileYCount; i++){ BottomLinez[i] = BottomLine; } 		// fill bottom lines
 
 		LastTileCount = TileFirstRowParent.transform.childCount;
@@ -103,6 +98,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(EnableSpinSlotTest){	
+			
 			SpinSlotTest(0);
 			SpinSlotTest(1);
 			SpinSlotTest(2);
@@ -150,12 +146,11 @@ public class SpinSlotsScript : MonoBehaviour {
 		//RowTop - top of the row is the last tile position y plus 1 unit, get length of row
 		BottomLineOffsetz[i] = BottomLinez[i] * 0.5f;			//bottom line is tile parent position
 		EndTileOffsetz[i] = EndTilez[i].position.y * (SpinCountz[i]);
-		//print("index= " + i + " EndTileOffsetz: " + EndTileOffsetz[i]+ "=== BottomLineOffsetz: " + BottomLineOffsetz[i]);
 
 		//When the tiles move down 1 unit
 		if(EndTileOffsetz[i] == BottomLineOffsetz[i]){
-			print("********* Tile end reached *******");
-			print("current index = " + i);
+			//print("********* Tile end reached *******");
+			//print("index= " + i + " EndTileOffsetz: " + EndTileOffsetz[i]+ "=== BottomLineOffsetz: " + BottomLineOffsetz[i]);
 			EndTilez[i].position = new Vector3(EndTilez[i].position.x, RowTopz[i], EndTilez[i].position.z);
 
 			SpinCountz[i]++;
@@ -171,16 +166,16 @@ public class SpinSlotsScript : MonoBehaviour {
 				
 				//spin stops, reset
 				if( UnitSpeed < 2 ){   
-					UnitSpeed = 0;		 
+					UnitSpeed = 0;	
 					EnableSpinSlotTest = false;
-					disableSpinButton = false;	}
+					disableSpinButton = false;	
+				}
 				else{ UnitSpeed = UnitSpeed - (UnitSpeed * 0.25f);	// spin keeps on spinnin' 
 				}
 			}
 			else{}
-			print("********* Tile end reached *******");
+			//print("********* Tile end reached *******");
 		}
-
 	}
 
 
@@ -201,29 +196,15 @@ public class SpinSlotsScript : MonoBehaviour {
 			UnitSpeed = UnitSpeedStart;
 			SpinCountz[i] = 1; 
 			ChildCountz[i] = 0; 
-			//SlotRow.position = new Vector3(SlotRow.position.x, TileFirstRowParentStart.y, SlotRow.position.z);
 			slotRow[i].position = new Vector3(slotRow[i].position.x, TileFirstRowParentStart.y, slotRow[i].position.z);
-			//SetTilePositions(TempRow);
 			SetTileXYPositions();
 			BottomLine = slotRow[i].position.y - (Unit * 2); //working one
-			//BottomLine = TileFirstRowParent.position.y - (Unit * 2);
 			BottomLinez[i] = slotRow[i].position.y - (Unit * 2);
 			disableSpinButton = true;
 		}
 
 	}
-
-
-	//saves the default positions of tiles on start
-	void GetTilePositions(Transform SlotRow){
-		//default was TileFirstRowParent for SlotRow
-		for(int i = 0;  i < (LastTileCount); i++ ){ 
-			Vector3 TileX = SlotRow.transform.GetChild(i).position;
-			TileXPositions[i] = new Vector3(TileX.x, TileX.y, TileX.z); 
-			}
-	}
-
-
+		
 	//saves the default positions of ALL tiles on start
 	void GetTileXYPositions(){
 		Transform tileY;
@@ -231,25 +212,15 @@ public class SpinSlotsScript : MonoBehaviour {
 
 		//default was TileFirstRowParent for SlotRow
 		for(int i = 0;  i < (TileYCount); i++ ){ 
-
-			//Transform TMasterParent = TileMasterParent.transform.GetChild(i); //long way
-			//Vector3 TileY = new Vector3(TMasterParent.position.x, TMasterParent.position.y, TMasterParent.position.z);//long way
+			
 			tileY = TileMasterParent.transform.GetChild(i);
 
 			//how do you get all the slow rows
 			for(int j = 0;  j < (TileXCount); j++ ){
-				
 				tileX = tileY.transform.GetChild(j).position;
 				TileXYPos[j,i] = new Vector3(tileX.x, tileX.y, tileX.z); 
 			}
 		}
-	}
-
-		
-	//sets the tile positions back to default
-	void SetTilePositions(Transform SlotRow ){
-		//default was TileFirstRowParent for SlotRow
-		for(int i = 0;  i < (LastTileCount); i++ ){  SlotRow.transform.GetChild(i).position = TileXPositions[i]; }
 	}
 
 
@@ -263,8 +234,6 @@ public class SpinSlotsScript : MonoBehaviour {
 			YRow[i].position = new Vector3(YRow[i].position.x, TileFirstRowParentStart.y,YRow[i].position.z);
 
 			for(int j = 0;  j < (TileXCount); j++ ){ 
-				//tileX = tileY.transform.GetChild(j).position;
-				//tileX.position = TileXYPos[j,i]; 
 				tileX = yRow.transform.GetChild(j);
 				tileX.position = TileXYPos[j,i];
 			}
@@ -280,15 +249,5 @@ public class SpinSlotsScript : MonoBehaviour {
 		}
 	}
 
-
-	void GetYRowTransform(){
-		for(int i = 0;  i < (TileYCount); i++ ){  print(YRow[i]);  }
-	}
-
-	void IterationTest(float countTest){
-		for(int i = 0; i < TileYCount; i++){
-			print("testing");
-		}
-		
-	}
+	//END OF LINE
 }
