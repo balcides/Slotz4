@@ -144,7 +144,7 @@ public class TileTest : MonoBehaviour {
 			FirstRowX.position = TileParentStart;
 			SetTilePositions();
 			RowTop = FirstRowX.transform.GetChild(LastTileCount - 1).position;
-			BottomLine = new Vector3(FirstRowX.position.x,FirstRowX.position.y - (Unit * 2), FirstRowX.position.z);
+			//BottomLine = new Vector3(FirstRowX.position.x,FirstRowX.position.y - (Unit * 2), FirstRowX.position.z);
 			disableSpinButton = true;
 		}
 	}
