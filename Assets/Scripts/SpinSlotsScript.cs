@@ -44,7 +44,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	//then a series of arrays for the x's
 	void Awake(){
 		TileXCount = 6;
-		TileYCount = 9;
+		TileYCount = 10;
 
 		//Unit
 		Unit = 2000; 
@@ -86,16 +86,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(EnableSpinSlotTest){	
-
-			SpinSlotTest(0);
-			SpinSlotTest(1);
-			SpinSlotTest(2);
-			SpinSlotTest(3);
-			SpinSlotTest(4);
-			SpinSlotTest(5);
-			SpinSlotTest(6);
-			SpinSlotTest(7);
-			SpinSlotTest(8);
+			for (int i = 0; i < TileYCount; i++){ 	SpinSlotTest(i);	}		//runs the actual slots
 		}
 	}
 
