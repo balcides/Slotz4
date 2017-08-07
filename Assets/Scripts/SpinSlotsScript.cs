@@ -21,6 +21,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	public int SpinCountBeforeStop;
 	public bool EnableCloneTileTest;
 	public float UnitSpeed;
+	float[] UnitSpeedz;
 
 	//Pre-internal
 	Vector3 TileFirstRowParentStart;
@@ -28,8 +29,12 @@ public class SpinSlotsScript : MonoBehaviour {
 	float[] BottomLinez;
 	float[] BottomLineOffsetz;
 	float[] EndTileOffsetz;
+	int[] SpinCountBeforeStopz;
 
 	//Internal
+	bool EnableSpinSlotTest;
+	bool disableSpinButton;
+	int SpinCountOffset;
 	int[] ChildCountz;
 	int[] SpinCountz;
 	Transform FirstRowX;
@@ -37,8 +42,6 @@ public class SpinSlotsScript : MonoBehaviour {
 	Transform[] EndTilez;
 	float[] RowTopz;
 	Vector3[,] TileXYPos;
-	bool EnableSpinSlotTest;
-	bool disableSpinButton;
 
 	//get an array to store all the y parents
 	//then a series of arrays for the x's
@@ -64,6 +67,8 @@ public class SpinSlotsScript : MonoBehaviour {
 		RowTopz = new float[TileYCount];
 		SpinCountz = new int[TileYCount];
 		ChildCountz = new int[TileYCount];
+		SpinCountBeforeStopz = new int[TileYCount];
+		UnitSpeedz = new float[TileYCount];
 	}
 
 	// Use this for initialization
@@ -81,12 +86,22 @@ public class SpinSlotsScript : MonoBehaviour {
 
 		for (int i = 0; i < TileYCount; i++){ SpinCountz[i] = 1; } 
 		for (int i = 0; i < TileYCount; i++){ ChildCountz[i] = 0; } 
+		for (int i = 0; i < TileYCount; i++){ 
+			int divisor = Mathf.RoundToInt(SpinCountBeforeStop/TileYCount);
+			SpinCountBeforeStopz[i] = SpinCountBeforeStop + (divisor * i); 
+			//print(SpinCountBeforeStopz[i]);
+		} 
+		for (int i = 0; i < TileYCount; i++){ UnitSpeedz[i] = UnitSpeedStart; } 
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(EnableSpinSlotTest){	
-			for (int i = 0; i < TileYCount; i++){ 	SpinSlotTest(i);	}		//runs the actual slots
+			for (int i = 0; i < TileYCount; i++){ 	
+				SpinSlotTest(i);  
+			}	
+			//runs the actual slots
 		}
 	}
 
@@ -117,7 +132,8 @@ public class SpinSlotsScript : MonoBehaviour {
 	public void SpinSlotTest(int i = 0){
 		//wonder if better to use the loop in this or outside of this?
 		//take ROW Y and MOVE IT down by 1 UNIT (whatever that is (Target is one unit down from current pos)
-		float Step = UnitSpeed * Time.deltaTime * (Unit * 2);
+		//float Step = UnitSpeed * Time.deltaTime * (Unit * 2);
+		float Step = UnitSpeedz[i] * Time.deltaTime * (Unit * 2);
 		YRow[i].position = Vector3.MoveTowards(YRow[i].position,new Vector3(YRow[i].position.x ,BottomLinez[i],YRow[i].position.z), Step);
 
 		//and then take the TILE AT THE END and MOVE IT to the TOP OF THE ROW
@@ -133,8 +149,6 @@ public class SpinSlotsScript : MonoBehaviour {
 			//print("index= " + i + " EndTileOffsetz: " + EndTileOffsetz[i]+ "=== BottomLineOffsetz: " + BottomLineOffsetz[i]);
 			EndTilez[i].position = new Vector3(EndTilez[i].position.x, RowTopz[i], EndTilez[i].position.z);
 
-			SpinCountz[i]++;
-
 			//Reset spin
 			if(ChildCountz[i] < (TileXCount - 1)){ 	ChildCountz[i]++; }
 			else{	ChildCountz[i] = 0;  }
@@ -142,18 +156,25 @@ public class SpinSlotsScript : MonoBehaviour {
 			EndTilez[i] = YRow[i].transform.GetChild(ChildCountz[i]);
 			BottomLinez[i] = YRow[i].position.y - (Unit * 2);
 
-			if(SpinCountz[i] >= SpinCountBeforeStop){
-				
+			if(SpinCountz[i] >= SpinCountBeforeStopz[i]){
+
 				//spin stops, reset
-				if( UnitSpeed < 2 ){   
-					UnitSpeed = 0;	
-					EnableSpinSlotTest = false;
-					disableSpinButton = false;	
+				//if( UnitSpeed < 2 ){   
+					//UnitSpeed = 0;	
+				if( UnitSpeedz[i] < 2 ){   
+					UnitSpeedz[i] = 0;	
+					if(i == TileYCount - 1){ 
+						EnableSpinSlotTest = false; 
+						disableSpinButton = false;
+					}
 				}
-				else{ UnitSpeed = UnitSpeed - (UnitSpeed * 0.25f);	// spin keeps on spinnin' 
+				//else{ UnitSpeed = UnitSpeed - (UnitSpeed * 0.1f);	// spin keeps on spinnin' 
+				else{ UnitSpeedz[i] = UnitSpeedz[i] - (UnitSpeedz[i] * 0.5f);	// spin keeps on spinnin' 
 				}
 			}
-			else{}
+			else{	}
+			SpinCountz[i]++;
+		
 			//print("********* Tile end reached *******");
 		}
 	}
@@ -174,6 +195,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		for(int i = 0; i < TileYCount; i++){
 			EnableSpinSlotTest = true;
 			UnitSpeed = UnitSpeedStart;
+			UnitSpeedz[i] = UnitSpeedStart;
 			SpinCountz[i] = 1; 
 			ChildCountz[i] = 0; 
 			slotRow[i].position = new Vector3(slotRow[i].position.x, TileFirstRowParentStart.y, slotRow[i].position.z);
