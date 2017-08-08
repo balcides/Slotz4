@@ -86,22 +86,17 @@ public class SpinSlotsScript : MonoBehaviour {
 
 		for (int i = 0; i < TileYCount; i++){ SpinCountz[i] = 1; } 
 		for (int i = 0; i < TileYCount; i++){ ChildCountz[i] = 0; } 
+		for (int i = 0; i < TileYCount; i++){ UnitSpeedz[i] = UnitSpeedStart; } 
 		for (int i = 0; i < TileYCount; i++){ 
 			int divisor = Mathf.RoundToInt(SpinCountBeforeStop/TileYCount);
 			SpinCountBeforeStopz[i] = SpinCountBeforeStop + (divisor * i); 
-			//print(SpinCountBeforeStopz[i]);
 		} 
-		for (int i = 0; i < TileYCount; i++){ UnitSpeedz[i] = UnitSpeedStart; } 
-
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(EnableSpinSlotTest){	
-			for (int i = 0; i < TileYCount; i++){ 	
-				SpinSlotTest(i);  
-			}	
-			//runs the actual slots
+			for (int i = 0; i < TileYCount; i++){ 	SpinSlotTest(i);  }	 //runs the actual slots
 		}
 	}
 
@@ -132,7 +127,6 @@ public class SpinSlotsScript : MonoBehaviour {
 	public void SpinSlotTest(int i = 0){
 		//wonder if better to use the loop in this or outside of this?
 		//take ROW Y and MOVE IT down by 1 UNIT (whatever that is (Target is one unit down from current pos)
-		//float Step = UnitSpeed * Time.deltaTime * (Unit * 2);
 		float Step = UnitSpeedz[i] * Time.deltaTime * (Unit * 2);
 		YRow[i].position = Vector3.MoveTowards(YRow[i].position,new Vector3(YRow[i].position.x ,BottomLinez[i],YRow[i].position.z), Step);
 
@@ -145,8 +139,6 @@ public class SpinSlotsScript : MonoBehaviour {
 
 		//When the tiles move down 1 unit
 		if(EndTileOffsetz[i] == BottomLineOffsetz[i]){
-			//print("********* Tile end reached *******");
-			//print("index= " + i + " EndTileOffsetz: " + EndTileOffsetz[i]+ "=== BottomLineOffsetz: " + BottomLineOffsetz[i]);
 			EndTilez[i].position = new Vector3(EndTilez[i].position.x, RowTopz[i], EndTilez[i].position.z);
 
 			//Reset spin
@@ -159,8 +151,6 @@ public class SpinSlotsScript : MonoBehaviour {
 			if(SpinCountz[i] >= SpinCountBeforeStopz[i]){
 
 				//spin stops, reset
-				//if( UnitSpeed < 2 ){   
-					//UnitSpeed = 0;	
 				if( UnitSpeedz[i] < 10 ){   
 					UnitSpeedz[i] = 0;	
 					if(i == TileYCount - 1){ 
@@ -168,7 +158,6 @@ public class SpinSlotsScript : MonoBehaviour {
 						disableSpinButton = false;
 					}
 				}
-				//else{ UnitSpeed = UnitSpeed - (UnitSpeed * 0.1f);	// spin keeps on spinnin' 
 				else{ UnitSpeedz[i] = UnitSpeedz[i] - (UnitSpeedz[i] * 0.5f);	// spin keeps on spinnin' 
 				}
 			}
