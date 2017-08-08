@@ -47,14 +47,14 @@ public class SpinSlotsScript : MonoBehaviour {
 	//then a series of arrays for the x's
 	void Awake(){
 		TileXCount = 6;
-		TileYCount = 10;
+		TileYCount = 7;
 
 		//Unit
 		Unit = 2000; 
 		UnitSpeed = 10;					//10 too fast, 5 too slow
 
 		UnitSpeedStart = UnitSpeed;
-		SpinCountBeforeStop = 50;
+		SpinCountBeforeStop = 40;
 
 		TileFirstRowParent = new GameObject("Example GO").transform;
 		TileMasterParent = new GameObject("Example GO Master").transform;
@@ -163,8 +163,6 @@ public class SpinSlotsScript : MonoBehaviour {
 			}
 			else{	}
 			SpinCountz[i]++;
-		
-			//print("********* Tile end reached *******");
 		}
 	}
 
@@ -229,3 +227,4 @@ public class SpinSlotsScript : MonoBehaviour {
 	}
 	//END OF LINE
 }
+
