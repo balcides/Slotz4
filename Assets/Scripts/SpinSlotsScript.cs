@@ -161,7 +161,7 @@ public class SpinSlotsScript : MonoBehaviour {
 				//spin stops, reset
 				//if( UnitSpeed < 2 ){   
 					//UnitSpeed = 0;	
-				if( UnitSpeedz[i] < 2 ){   
+				if( UnitSpeedz[i] < 10 ){   
 					UnitSpeedz[i] = 0;	
 					if(i == TileYCount - 1){ 
 						EnableSpinSlotTest = false; 
