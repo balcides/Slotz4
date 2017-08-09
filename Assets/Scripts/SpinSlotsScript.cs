@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 /// <summary>
 /// 
@@ -21,7 +22,8 @@ public class SpinSlotsScript : MonoBehaviour {
 	public int SpinCountBeforeStop;
 	public bool EnableCloneTileTest;
 	public float UnitSpeed;
-	float[] UnitSpeedz;
+	public Material[] TileTex;
+
 
 	//Pre-internal
 	Vector3 TileFirstRowParentStart;
@@ -29,6 +31,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	float[] BottomLinez;
 	float[] BottomLineOffsetz;
 	float[] EndTileOffsetz;
+	float[] UnitSpeedz;
 	int[] SpinCountBeforeStopz;
 
 	//Internal
@@ -69,6 +72,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		ChildCountz = new int[TileYCount];
 		SpinCountBeforeStopz = new int[TileYCount];
 		UnitSpeedz = new float[TileYCount];
+		//TileTex = new Material[6];
 	}
 
 	// Use this for initialization
@@ -90,7 +94,17 @@ public class SpinSlotsScript : MonoBehaviour {
 		for (int i = 0; i < TileYCount; i++){ 
 			int divisor = Mathf.RoundToInt(SpinCountBeforeStop/TileYCount);
 			SpinCountBeforeStopz[i] = SpinCountBeforeStop + (divisor * i); 
-		} 
+		}
+		int[] rowOfNumz = new int[TileYCount * TileXCount];
+
+		RandomizeTileIcons();
+
+		for (int i = 0; i < (rowOfNumz.Length); i++){ 	
+			rowOfNumz[i] = Randomizer(0,10);
+			} 
+	
+		Debug.Log("rowOfNumz = " +String.Join("", new List<int>(rowOfNumz).ConvertAll(i => i.ToString()).ToArray()));
+
 	}
 	
 	// Update is called once per frame
@@ -203,7 +217,7 @@ public class SpinSlotsScript : MonoBehaviour {
 			YRow[i] = TileMasterParent.transform.GetChild(i);
 			YRow[i].name = "TileRow" + i;
 
-			//how do you get all the slow rows
+			//how do you get all the slot rows
 			for(int j = 0;  j < (TileXCount); j++ ){
 				tileX = YRow[i].transform.GetChild(j).position;
 				TileXYPos[j,i] = new Vector3(tileX.x, tileX.y, tileX.z); 
@@ -225,6 +239,41 @@ public class SpinSlotsScript : MonoBehaviour {
 			}
 		}
 	}
+
+	//sets random textures per tile
+	void RandomizeTileIcons(){
+		// go through each y
+		for(int i = 0;  i < (TileYCount); i++ ){
+			for(int j = 0;  j < (TileXCount); j++ ){
+				YRow[i].transform.GetChild(j).GetComponent<MeshRenderer>().material = TileTex[1];
+				//print(TileTex[0]);
+			}
+
+
+			// go through each x tile in that y row
+			// pick a random num between the num of materials in the array + 1 and 0
+			// assign the tile that texture
+		}
+
+	}
+
+	public int Randomizer(int min, int max){
+		System.Random random = new System.Random();
+		int chosenSystem = random.Next(0,3);
+		int chosenNum;
+		if(chosenSystem >= 1){ 	
+			print("system rand");
+			chosenNum = random.Next(min, max); 
+		}
+		else{	
+			print("unity rand");
+			chosenNum = UnityEngine.Random.Range(min, max); 
+		}
+		return chosenNum;
+		
+	}
 	//END OF LINE
 }
+
+
 
