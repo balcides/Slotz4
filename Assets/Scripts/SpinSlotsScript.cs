@@ -51,7 +51,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	//then a series of arrays for the x's
 	void Awake(){
 		TileXCount = 6;
-		TileYCount = 7;
+		TileYCount = 9;
 
 		//Unit
 		Unit = 2000; 
@@ -61,6 +61,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		SpinCountBeforeStop = 30;
 
 		TileRange = TileTex.Length;
+		//TileRange = 2;
 
 		TileFirstRowParent = new GameObject("Example GO").transform;
 		TileMasterParent = new GameObject("Example GO Master").transform;
@@ -81,7 +82,7 @@ public class SpinSlotsScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+		
 		//Order Matters	
 		for (int i = 0; i < TileYCount; i++){ BottomLinez[i] =  TileFirstRowParent.position.y - (Unit * 2); } 						// fill bottom lines
 		for (int i = 0; i < TileYCount; i++){ RowTopz[i] = TileFirstRowParent.transform.GetChild(TileXCount - 1).position.y; } 		// fill row top lines
@@ -99,9 +100,7 @@ public class SpinSlotsScript : MonoBehaviour {
 			SpinCountBeforeStopz[i] = SpinCountBeforeStop + (divisor * i); 
 		}
 		//int[] rowOfNumz = new int[TileYCount * TileXCount];
-
 		EnableSpinSlotTest = false;
-
 		for (int i = 0; i < TileYCount; i++){ RandomizeTileIcons();}
 
 		//for (int i = 0; i < (rowOfNumz.Length); i++){ 	rowOfNumz[i] = Randomizer(0,10);	} 
