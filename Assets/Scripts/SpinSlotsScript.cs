@@ -45,6 +45,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	Transform[] EndTilez;
 	float[] RowTopz;
 	Vector3[,] TileXYPos;
+	int TileRange;
 
 	//get an array to store all the y parents
 	//then a series of arrays for the x's
@@ -57,7 +58,9 @@ public class SpinSlotsScript : MonoBehaviour {
 		UnitSpeed = 10;					//10 too fast, 5 too slow
 
 		UnitSpeedStart = UnitSpeed;
-		SpinCountBeforeStop = 40;
+		SpinCountBeforeStop = 30;
+
+		TileRange = TileTex.Length;
 
 		TileFirstRowParent = new GameObject("Example GO").transform;
 		TileMasterParent = new GameObject("Example GO Master").transform;
@@ -73,11 +76,11 @@ public class SpinSlotsScript : MonoBehaviour {
 		SpinCountBeforeStopz = new int[TileYCount];
 		UnitSpeedz = new float[TileYCount];
 		//TileTex = new Material[6];
+		if(EnableCloneTileTest){	CreateTileGridTransform();	}
 	}
 
 	// Use this for initialization
 	void Start () {
-		if(EnableCloneTileTest){	CreateTileGridTransform();	}
 
 		//Order Matters	
 		for (int i = 0; i < TileYCount; i++){ BottomLinez[i] =  TileFirstRowParent.position.y - (Unit * 2); } 						// fill bottom lines
@@ -95,16 +98,14 @@ public class SpinSlotsScript : MonoBehaviour {
 			int divisor = Mathf.RoundToInt(SpinCountBeforeStop/TileYCount);
 			SpinCountBeforeStopz[i] = SpinCountBeforeStop + (divisor * i); 
 		}
-		int[] rowOfNumz = new int[TileYCount * TileXCount];
+		//int[] rowOfNumz = new int[TileYCount * TileXCount];
 
-		RandomizeTileIcons();
+		EnableSpinSlotTest = false;
 
-		for (int i = 0; i < (rowOfNumz.Length); i++){ 	
-			rowOfNumz[i] = Randomizer(0,10);
-			} 
-	
-		Debug.Log("rowOfNumz = " +String.Join("", new List<int>(rowOfNumz).ConvertAll(i => i.ToString()).ToArray()));
+		for (int i = 0; i < TileYCount; i++){ RandomizeTileIcons();}
 
+		//for (int i = 0; i < (rowOfNumz.Length); i++){ 	rowOfNumz[i] = Randomizer(0,10);	} 
+		//Debug.Log("rowOfNumz = " +String.Join("", new List<int>(rowOfNumz).ConvertAll(i => i.ToString()).ToArray()));
 	}
 	
 	// Update is called once per frame
@@ -153,6 +154,7 @@ public class SpinSlotsScript : MonoBehaviour {
 
 		//When the tiles move down 1 unit
 		if(EndTileOffsetz[i] == BottomLineOffsetz[i]){
+			EndTilez[i].GetComponent<MeshRenderer>().material = TileTex[Randomizer(0, TileRange)];
 			EndTilez[i].position = new Vector3(EndTilez[i].position.x, RowTopz[i], EndTilez[i].position.z);
 
 			//Reset spin
@@ -203,6 +205,7 @@ public class SpinSlotsScript : MonoBehaviour {
 			SetTileXYPositions();
 			BottomLinez[i] = slotRow[i].position.y - (Unit * 2);
 			disableSpinButton = true;
+			//RandomizeTileIcons();
 		}
 
 	}
@@ -243,35 +246,26 @@ public class SpinSlotsScript : MonoBehaviour {
 	//sets random textures per tile
 	void RandomizeTileIcons(){
 		// go through each y
-		for(int i = 0;  i < (TileYCount); i++ ){
-			for(int j = 0;  j < (TileXCount); j++ ){
-				YRow[i].transform.GetChild(j).GetComponent<MeshRenderer>().material = TileTex[1];
-				//print(TileTex[0]);
+		int randNum;
+		for(int i = 0;  i < TileYCount; i++ ){
+			for(int j = 0;  j < TileXCount; j++ ){
+				randNum = Randomizer(0, TileRange);
+				YRow[i].transform.GetChild(j).GetComponent<MeshRenderer>().material = TileTex[randNum];
+				//print(YRow[i].transform.GetChild(j).GetComponent<MeshRenderer>().material);
 			}
-
-
-			// go through each x tile in that y row
-			// pick a random num between the num of materials in the array + 1 and 0
-			// assign the tile that texture
 		}
 
 	}
 
 	public int Randomizer(int min, int max){
 		System.Random random = new System.Random();
-		int chosenSystem = random.Next(0,3);
+		int chosenSystem = random.Next(0,2);
 		int chosenNum;
-		if(chosenSystem >= 1){ 	
-			print("system rand");
-			chosenNum = random.Next(min, max); 
-		}
-		else{	
-			print("unity rand");
-			chosenNum = UnityEngine.Random.Range(min, max); 
-		}
+		if(chosenSystem >= 1){ 	chosenNum = random.Next(min, max); }
+		else{	chosenNum = UnityEngine.Random.Range(min, max);  }
 		return chosenNum;
-		
 	}
+		
 	//END OF LINE
 }
 
