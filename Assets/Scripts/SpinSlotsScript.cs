@@ -38,6 +38,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	bool EnableSpinSlotTest;
 	bool disableSpinButton;
 	int SpinCountOffset;
+	int TileRange;
 	int[] ChildCountz;
 	int[] SpinCountz;
 	Transform FirstRowX;
@@ -45,7 +46,8 @@ public class SpinSlotsScript : MonoBehaviour {
 	Transform[] EndTilez;
 	float[] RowTopz;
 	Vector3[,] TileXYPos;
-	int TileRange;
+	Transform[,] MatchRowArray;
+	Transform[,] MatchRowArray2;
 
 	//get an array to store all the y parents
 	//then a series of arrays for the x's
@@ -55,7 +57,7 @@ public class SpinSlotsScript : MonoBehaviour {
 
 		//Unit
 		Unit = 2000; 
-		UnitSpeed = 10;					//10 too fast, 5 too slow
+		UnitSpeed = 13;					//10 too fast, 5 too slow
 
 		UnitSpeedStart = UnitSpeed;
 		SpinCountBeforeStop = 30;
@@ -78,6 +80,8 @@ public class SpinSlotsScript : MonoBehaviour {
 		UnitSpeedz = new float[TileYCount];
 		//TileTex = new Material[6];
 		if(EnableCloneTileTest){	CreateTileGridTransform();	}
+		MatchRowArray = new Transform[TileXCount, TileYCount];
+		MatchRowArray2 = new Transform[TileXCount, TileYCount];
 	}
 
 	// Use this for initialization
@@ -105,6 +109,11 @@ public class SpinSlotsScript : MonoBehaviour {
 
 		//for (int i = 0; i < (rowOfNumz.Length); i++){ 	rowOfNumz[i] = Randomizer(0,10);	} 
 		//Debug.Log("rowOfNumz = " +String.Join("", new List<int>(rowOfNumz).ConvertAll(i => i.ToString()).ToArray()));
+
+		FillMatchRows();
+		FillTransformArrayWithPlayTiles();
+		//PrintMatchArray();
+		PrintMatchArray2();
 	}
 	
 	// Update is called once per frame
@@ -170,6 +179,9 @@ public class SpinSlotsScript : MonoBehaviour {
 					UnitSpeedz[i] = 0;	
 					if(i == TileYCount - 1){ 
 						EnableSpinSlotTest = false; 
+						FillMatchRows();
+						FillTransformArrayWithPlayTiles();
+						PrintMatchArray2();
 						disableSpinButton = false;
 					}
 				}
@@ -253,7 +265,6 @@ public class SpinSlotsScript : MonoBehaviour {
 				//print(YRow[i].transform.GetChild(j).GetComponent<MeshRenderer>().material);
 			}
 		}
-
 	}
 
 	public int Randomizer(int min, int max){
@@ -264,9 +275,122 @@ public class SpinSlotsScript : MonoBehaviour {
 		else{	chosenNum = UnityEngine.Random.Range(min, max);  }
 		return chosenNum;
 	}
+
+
+	// Pre-Match Mechanic
+	void FillMatchRows(){
+		//preset vars
+		Transform tileX;	//currentPosx
+		Vector3[] proxyXpos = new Vector3[TileYCount];
+		Vector3 getXpos;
+		Transform tempX;
+
+		//Go to rowY[0]
+		Transform yRow0 = YRow[0];
+
+		//i = 0; i < xCount  ::i counts yrow[0]child x tiles
+		for(int i = 0; i < TileXCount; i++){
+			//FIRST X0 in ROWY 0
+			//look at firstX = rowY[0].getChild(0i)
+			tileX = yRow0.transform.GetChild(i);
+
+			// j = 0; j < xCount -1 :: j counts the next proxy count for horz neighbors of i
+			for(int j=0; j < TileYCount; j++){
+				//calc the proxyXpos[1j] = currentPosx + ([1j] * (unit * 2))
+				//print(tileX.position.y);
+				proxyXpos[j] = new Vector3(tileX.position.x + (j * (Unit * 2)), tileX.position.y, tileX.position.z); 
+
+				//look at each x in the next YRow and compare with proxy
+				//k = 0; k < xCount :: k counts the horz neighbors of i to match with proxy
+				for(int k = 0; k < TileXCount; k++){
+					//rowY[1j].getChild(0k) =? proxyXpos[1j]
+					//rowY[1j].getChild(1k) =? proxyXpos[1j]
+					//rowY[1j].getChild(2k) =? proxyXpos[1j]
+
+					tempX = YRow[j].GetChild(k);
+					getXpos = new Vector3(tempX.position.x, tileX.position.y,tileX.position.z);
+
+					if(getXpos == proxyXpos[j]){
+						// if theres a match
+						//add to the first slot of matchRowArray
+						//matchRowArray[0i,0j] = rowY[1j].getChild(2k)
+						MatchRowArray[i,j] = tempX;
 		
+						//look at the next rowY for the mathcing X tile
+					}
+				}
+			}
+		}
+	}
+		
+	void PrintMatchArray(){
+		GameObject EmptyObj;
+		//for(int i = 0; i < TileXCount; i++){
+		//	int j = 0;
+		//	print(MatchRowArray[i,j].position);
+		//	EmptyObj = new GameObject("sample" + i + j);
+		//	EmptyObj.transform.position = MatchRowArray[i,j].transform.position;
+
+			for(int j = 0; j < TileYCount; j++){
+			int i = 2;
+				//print(MatchRowArray[i,j].position);
+				EmptyObj = new GameObject("sample" + i + j);
+				EmptyObj.transform.position = MatchRowArray[i,j].transform.position;
+			}
+		//}
+	}
+
+	//A)just realized it may be easier to first pre-fill an array with coordinates: PreFillArrayCoor()
+	//GetTileXYPositions()	
+
+	//B)then fill another array with transforms whereever the position == the coordinates
+	//FillTransformArrayWithPlayTiles()
+	void FillTransformArrayWithPlayTiles(){
+		Transform getPosOfGameTile;
+		//for y
+		for(int i = 0; i < TileYCount; i++){
+			//for x
+			for(int j = 0; j < TileXCount; j++){
+				//getPosOfgameTile = Yrow[].GetChild()
+				for(int k = 0; k < TileYCount; k++){
+					for(int l = 0; l < TileXCount; l++){
+						//print(YRow[k].GetChild(l).position);
+						//print(k + " " + j);
+						//getPosOfGameTile = YRow[k].GetChild(l);
+						getPosOfGameTile = YRow[k].GetChild(l);
+						//print(YRow[i].GetChild(j.position));
+						//if TileXYPos[i,j] == getPosOfgameTile
+						if(TileXYPos[j,i] == getPosOfGameTile.position){
+						//if(TileXYPos[j,i] == YRow[k].GetChild(l).position){
+							//TransformArrayWithPlayTiles[i,j] = getPosOfgameTile
+							MatchRowArray2[j,i] = getPosOfGameTile;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	void PrintMatchArray2(){
+		GameObject EmptyObj;
+		//for(int i = 0; i < TileXCount; i++){
+		//	int j = 0;
+		//	print(MatchRowArray[i,j].position);
+		//	EmptyObj = new GameObject("sample" + i + j);
+		//	EmptyObj.transform.position = MatchRowArray[i,j].transform.position;
+
+		for(int i = 0; i < TileYCount; i++){
+			int j = 2;
+			//print(MatchRowArray[i,j].position);
+			//EmptyObj = new GameObject("sample" + j + i);
+			//EmptyObj.transform.position = MatchRowArray2[j,i].transform.position;
+			MatchRowArray2[j,i].gameObject.GetComponent<Renderer>().material.color = Color.red;
+		}
+		//}
+	}
+
+	//C)then run match
+
 	//END OF LINE
 }
-
-
 
