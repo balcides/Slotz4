@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class GameManagerScript : MonoBehaviour {
 
-	public int Cash;
-	public int Bet;	
+	public static int Cash;
+	public static int Bet;	
 	public RectTransform TextUICash;
 	public RectTransform TextUIBet;
 
