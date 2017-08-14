@@ -40,6 +40,8 @@ public class SpinSlotsScript : MonoBehaviour {
 	int SpinCountOffset;
 	int TileRange;
 	int[] ChildCountz;
+	int RowOneMatchCount;
+	int RowOneWins;
 	int[] SpinCountz;
 	int[] CountMatch;
 	Texture[] TexMatch;
@@ -51,6 +53,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	Transform[,] MatchRowArray;
 	Transform[,] MatchRowArray2;
 	Transform[,] FinalMatchTiles;
+
 
 	//get an array to store all the y parents
 	//then a series of arrays for the x's
@@ -88,6 +91,9 @@ public class SpinSlotsScript : MonoBehaviour {
 		FinalMatchTiles = new Transform[TileXCount, TileYCount];
 		CountMatch = new int[TileYCount];
 		TexMatch = new Texture[TileYCount];
+
+		RowOneMatchCount = 0;
+		RowOneWins = 0;
 	}
 
 	// Use this for initialization
@@ -119,7 +125,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		//Debug.Log("rowOfNumz = " +String.Join("", new List<int>(rowOfNumz).ConvertAll(i => i.ToString()).ToArray()));
 
 		FillTransformArrayWithPlayTiles();
-		PrintMatchArray();
+		//PrintMatchArray();
 		RunMatch();
 		PrintMatch();
 	}
@@ -170,7 +176,8 @@ public class SpinSlotsScript : MonoBehaviour {
 
 		//When the tiles move down 1 unit
 		if(EndTileOffsetz[i] == BottomLineOffsetz[i]){
-			EndTilez[i].GetComponent<MeshRenderer>().material = TileTex[Randomizer(0, TileRange)];
+			//EndTilez[i].GetComponent<MeshRenderer>().material = TileTex[Randomizer(0, TileRange)];
+			EndTilez[i].GetComponent<MeshRenderer>().material = TileTex[Randomizer(0, 4)];
 			EndTilez[i].position = new Vector3(EndTilez[i].position.x, RowTopz[i], EndTilez[i].position.z);
 
 			//Reset spin
@@ -225,6 +232,11 @@ public class SpinSlotsScript : MonoBehaviour {
 			SetTileXYPositions();
 			BottomLinez[i] = slotRow[i].position.y - (Unit * 2);
 			disableSpinButton = true;
+
+			RowOneWins = 0;
+			RowOneMatchCount = 0;
+			GameManagerScript.Wins = RowOneWins;
+			GameManagerScript.RowOneCount = RowOneMatchCount;
 		}
 	}
 
@@ -275,8 +287,9 @@ public class SpinSlotsScript : MonoBehaviour {
 	}
 
 	public int Randomizer(int min, int max){
+		// 1 or greater = c# random
 		System.Random random = new System.Random();
-		int chosenSystem = random.Next(0,2);
+		int chosenSystem = random.Next(0,1);
 		int chosenNum;
 		if(chosenSystem >= 1){ 	chosenNum = random.Next(min, max); }
 		else{	chosenNum = UnityEngine.Random.Range(min, max);  }
@@ -308,11 +321,39 @@ public class SpinSlotsScript : MonoBehaviour {
 
 	//testing Pre-Match Mechanic
 	void PrintMatchArray(){
-		for(int i = 0; i < TileYCount; i++){
-			//int j = 1;
-			//MatchRowArray2[j,i].gameObject.GetComponent<Renderer>().material.color = Color.red;
+		Texture currentSymbol= null;
+		Texture nextSymbol = null;
+		int matchCount = 1;
+		RowOneMatchCount = 1;
+		int wins = 0;
+		RowOneWins = 0;
+		for(int i = 1; i < TileYCount; i++){
+			int j = Convert.ToInt32(Mathf.Ceil((TileXCount / 2)));
+			nextSymbol = MatchRowArray2[j,i].gameObject.GetComponent<Renderer>().material.mainTexture;
+			currentSymbol = MatchRowArray2[j,0].gameObject.GetComponent<Renderer>().material.mainTexture;
+			if(currentSymbol == nextSymbol){
+				RowOneMatchCount++;
+				//matchCount++;
+				if(RowOneMatchCount >=3){
+					MatchRowArray2[j,0].gameObject.GetComponent<Renderer>().material.color = Color.red;
+					MatchRowArray2[j,1].gameObject.GetComponent<Renderer>().material.color = Color.red;
+					MatchRowArray2[j,i].gameObject.GetComponent<Renderer>().material.color = Color.red;
+					RowOneWins = (1000 * RowOneMatchCount) + (Convert.ToInt16((Mathf.Pow(2, (RowOneMatchCount - 3f)) * 1000f)));
+					//RowOneWins = 1000 * RowOneMatchCount;
+					GameManagerScript.Wins = RowOneWins;
+				}
+			}
+			else{
+
+				break;}
+			//gameObject.GetComponent<Renderer>().material.mainTexture;
 			//print("");
 		}
+		print(" " + currentSymbol);
+		print("CountMatch = " + RowOneMatchCount);
+		print("Wins = " + RowOneWins);
+		GameManagerScript.RowOneCount = RowOneMatchCount;
+		GameManagerScript.Cash = GameManagerScript.Cash + RowOneWins;
 	}
 
 	//C)then run match
@@ -351,7 +392,7 @@ public class SpinSlotsScript : MonoBehaviour {
 			if(CountMatch[j] >= 3){
 				// award 1000 credits + (2(power) match - 3) * 1000
 				//GameManagerScript.Cash = GameManagerScript.Cash + 1000 + Convert.ToInt16((Mathf.Pow(2, (CountMatch[j] - 3f)) * 1000f));
-				GameManagerScript.Cash = GameManagerScript.Cash + 1000 + (CountMatch[j] * 1000);
+				//GameManagerScript.Cash = GameManagerScript.Cash + 1000 + (CountMatch[j] * 1000);
 				//print(GameManagerScript.Cash);
 			}
 		}
@@ -364,7 +405,7 @@ public class SpinSlotsScript : MonoBehaviour {
 				if(!FinalMatchTiles[j,i]){}
 				else{
 					//print(FinalMatchTiles[j,i].gameObject.GetComponent<Renderer>().material.mainTexture);
-					FinalMatchTiles[j,i].gameObject.GetComponent<Renderer>().material.color = Color.red;
+					//FinalMatchTiles[j,i].gameObject.GetComponent<Renderer>().material.color = Color.red;
 				}
 			}
 		}
@@ -382,4 +423,3 @@ public class SpinSlotsScript : MonoBehaviour {
 
 	//END OF LINE
 }
-

@@ -7,16 +7,26 @@ public class GameManagerScript : MonoBehaviour {
 
 	public static int Cash;
 	public static int Bet;	
+	public static int Wins;
+	public static int RowOneCount;	
+
 	public RectTransform TextUICash;
 	public RectTransform TextUIBet;
+	public RectTransform TextUIWins;
+	public RectTransform TextUIMatchCount;
 
 	// Use this for pre-initialization
 	void Awake () {
 		Cash = 10000;
 		Bet = 100;
+		Wins = 0;
+		RowOneCount = 0;
 
 		TextUICash.GetComponent<Text>().text = Cash.ToString();
 		TextUIBet.GetComponent<Text>().text = Bet.ToString();
+		TextUIWins.GetComponent<Text>().text = Wins.ToString();
+		TextUIMatchCount.GetComponent<Text>().text = RowOneCount.ToString();
+
 	}
 
 	// Use this for initialization
@@ -28,6 +38,8 @@ public class GameManagerScript : MonoBehaviour {
 	void Update () {
 		TextUICash.GetComponent<Text>().text = Cash.ToString();
 		TextUIBet.GetComponent<Text>().text = Bet.ToString();
+		TextUIWins.GetComponent<Text>().text = Wins.ToString();
+		TextUIMatchCount.GetComponent<Text>().text = RowOneCount.ToString();
 		
 	}
 
