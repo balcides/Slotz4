@@ -215,6 +215,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		if (disableSpinButton){}
 		else{
 			print("SPIN BUTTON PRESSED========================================");
+			GameManagerScript.PayForSpin();
 			ResetVarsBeforeSpin(YRow);
 		}
 	}

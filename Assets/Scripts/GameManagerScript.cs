@@ -44,7 +44,7 @@ public class GameManagerScript : MonoBehaviour {
 	}
 
 	//Withdrawal on spin
-	public void PayForSpin(){
+	public static void PayForSpin(){
 		Cash = Cash - Bet;
 		if(Cash <= 0){ Cash = 0;}
 	}
