@@ -18,7 +18,7 @@ public class GameManagerScript : MonoBehaviour {
 	// Use this for pre-initialization
 	void Awake () {
 		Cash = 10000;
-		Bet = 100;
+		Bet = 400;
 		Wins = 0;
 		RowOneCount = 0;
 

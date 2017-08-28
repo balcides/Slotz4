@@ -41,6 +41,7 @@ public class SpinSlotsScript : MonoBehaviour {
 	int TileRange;
 	int[] ChildCountz;
 	int RowOneMatchCount;
+	int[] RowMatchCount;
 	int RowOneWins;
 	int[] SpinCountz;
 	int[] CountMatch;
@@ -69,7 +70,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		SpinCountBeforeStop = 30;
 
 		TileRange = TileTex.Length;
-		//TileRange = 2;
+//		TileRange = 2;
 
 		TileFirstRowParent = new GameObject("Example GO").transform;
 		TileMasterParent = new GameObject("Example GO Master").transform;
@@ -93,6 +94,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		TexMatch = new Texture[TileYCount];
 
 		RowOneMatchCount = 0;
+		RowMatchCount = new int[TileXCount];
 		RowOneWins = 0;
 	}
 
@@ -120,6 +122,7 @@ public class SpinSlotsScript : MonoBehaviour {
 		//int[] rowOfNumz = new int[TileYCount * TileXCount];
 		EnableSpinSlotTest = false;
 		for (int i = 0; i < TileYCount; i++){ RandomizeTileIcons();}
+		for(int j = 0; j < TileXCount; j++){ RowMatchCount[j] = 1;}
 
 		//for (int i = 0; i < (rowOfNumz.Length); i++){ 	rowOfNumz[i] = Randomizer(0,10);	} 
 		//Debug.Log("rowOfNumz = " +String.Join("", new List<int>(rowOfNumz).ConvertAll(i => i.ToString()).ToArray()));
@@ -176,8 +179,8 @@ public class SpinSlotsScript : MonoBehaviour {
 
 		//When the tiles move down 1 unit
 		if(EndTileOffsetz[i] == BottomLineOffsetz[i]){
-			//EndTilez[i].GetComponent<MeshRenderer>().material = TileTex[Randomizer(0, TileRange)];
-			EndTilez[i].GetComponent<MeshRenderer>().material = TileTex[Randomizer(0, 4)];
+			EndTilez[i].GetComponent<MeshRenderer>().material = TileTex[Randomizer(0, TileRange)];
+//			EndTilez[i].GetComponent<MeshRenderer>().material = TileTex[Randomizer(0, 4)];
 			EndTilez[i].position = new Vector3(EndTilez[i].position.x, RowTopz[i], EndTilez[i].position.z);
 
 			//Reset spin
@@ -236,6 +239,8 @@ public class SpinSlotsScript : MonoBehaviour {
 
 			RowOneWins = 0;
 			RowOneMatchCount = 0;
+			for(int j = 0; j < TileXCount; j++){ RowMatchCount[j] = 0; }
+
 			GameManagerScript.Wins = RowOneWins;
 			GameManagerScript.RowOneCount = RowOneMatchCount;
 		}
@@ -319,42 +324,59 @@ public class SpinSlotsScript : MonoBehaviour {
 			}
 		}
 	}
-
-	//testing Pre-Match Mechanic
+		
+	//testing Pre-Match Mechanic (being used for one match row test)
 	void PrintMatchArray(){
 		Texture currentSymbol= null;
 		Texture nextSymbol = null;
-		int matchCount = 1;
+//		int matchCount = 1;
 		RowOneMatchCount = 1;
-		int wins = 0;
+//		int j = 4;
 		RowOneWins = 0;
-		for(int i = 1; i < TileYCount; i++){
-			int j = Convert.ToInt32(Mathf.Ceil((TileXCount / 2)));
-			nextSymbol = MatchRowArray2[j,i].gameObject.GetComponent<Renderer>().material.mainTexture;
-			currentSymbol = MatchRowArray2[j,0].gameObject.GetComponent<Renderer>().material.mainTexture;
-			if(currentSymbol == nextSymbol){
-				RowOneMatchCount++;
-				//matchCount++;
-				if(RowOneMatchCount >=3){
-					MatchRowArray2[j,0].gameObject.GetComponent<Renderer>().material.color = Color.red;
-					MatchRowArray2[j,1].gameObject.GetComponent<Renderer>().material.color = Color.red;
-					MatchRowArray2[j,i].gameObject.GetComponent<Renderer>().material.color = Color.red;
-					RowOneWins = (1000 * RowOneMatchCount) + (Convert.ToInt16((Mathf.Pow(2, (RowOneMatchCount - 3f)) * 1000f)));
-					//RowOneWins = 1000 * RowOneMatchCount;
-					GameManagerScript.Wins = RowOneWins;
-				}
-			}
-			else{
+		for(int j = 1; j < 5; j++){
+			RowMatchCount[j] = 1;
+	//		int wins = 0;
 
-				break;}
-			//gameObject.GetComponent<Renderer>().material.mainTexture;
-			//print("");
+			for(int i = 1; i < TileYCount; i++){
+	//			int j = Convert.ToInt32(Mathf.Ceil((TileXCount / 2)));
+				nextSymbol = MatchRowArray2[j,i].gameObject.GetComponent<Renderer>().material.mainTexture;
+				currentSymbol = MatchRowArray2[j,0].gameObject.GetComponent<Renderer>().material.mainTexture;
+//				print(nextSymbol + "==" + currentSymbol); 
+
+				if(currentSymbol == nextSymbol){
+	//				print("match happening at " + j);
+	//				RowOneMatchCount++;
+					RowMatchCount[j]++;
+					//matchCount++;
+//					MatchRowArray2[j,0].gameObject.GetComponent<Renderer>().material.color = Color.red;
+//					MatchRowArray2[j,1].gameObject.GetComponent<Renderer>().material.color = Color.red;
+	//				if(RowOneMatchCount >=3){
+					if(RowMatchCount[j] >= 3){
+						MatchRowArray2[j,0].gameObject.GetComponent<Renderer>().material.color = Color.red;
+						MatchRowArray2[j,1].gameObject.GetComponent<Renderer>().material.color = Color.red;
+						MatchRowArray2[j,i].gameObject.GetComponent<Renderer>().material.color = Color.red;
+	//					RowOneWins = (1000 * RowOneMatchCount) + (Convert.ToInt32((Mathf.Pow(2, (RowOneMatchCount - 3f)) * 1000f)));
+	//					RowOneWins = 1000 * RowOneMatchCount;
+						RowOneWins = RowOneWins + (1000 * RowMatchCount[j]);
+						GameManagerScript.Wins = RowOneWins;
+					}
+				}
+				else{ 
+					break;
+				}
+				//gameObject.GetComponent<Renderer>().material.mainTexture;
+				//print("");
+			}
+				
+//			print(" " + currentSymbol);
+	//		print("CountMatch = " + RowOneMatchCount);
+			print("CountMatch[" + j + "] = " + RowMatchCount[j]);
+			print("Wins = " + RowOneWins);
+	//		GameManagerScript.RowOneCount = RowOneMatchCount;
+			GameManagerScript.RowOneCount = RowMatchCount[j];
+			GameManagerScript.Cash = GameManagerScript.Cash + RowOneWins;
+	//		}
 		}
-		print(" " + currentSymbol);
-		print("CountMatch = " + RowOneMatchCount);
-		print("Wins = " + RowOneWins);
-		GameManagerScript.RowOneCount = RowOneMatchCount;
-		GameManagerScript.Cash = GameManagerScript.Cash + RowOneWins;
 	}
 
 	//C)then run match
@@ -424,3 +446,6 @@ public class SpinSlotsScript : MonoBehaviour {
 
 	//END OF LINE
 }
+
+//#NOTE: Aug 25: One row match works well, but multi-line matching works a little janky. 
+// AUG28: Multi-line match working well but not the win count. Almost there, at least you have a fun game :)
