@@ -24,10 +24,10 @@ public class buttonTestUI2 : MonoBehaviour {
 		
 		switch (transform.name){
 			case "button2":
-				SM.SceneManager.LoadScene("UIOne", SM.LoadSceneMode.Single);
+				SM.SceneManager.LoadScene("UIOneDemo", SM.LoadSceneMode.Single);
 				break;
 			case "button3":
-				SM.SceneManager.LoadScene("UITestMenu", SM.LoadSceneMode.Single);
+				SM.SceneManager.LoadScene("UITestMenuDemo", SM.LoadSceneMode.Single);
 				break;
 			default:
 				print("test");
