@@ -329,35 +329,41 @@ public class SpinSlotsScript : MonoBehaviour {
 	void PrintMatchArray(){
 		Texture currentSymbol= null;
 		Texture nextSymbol = null;
-//		int matchCount = 1;
+		int matchCount = 0;
+		int[] matchCountA;
+		matchCountA = new int[TileYCount];
+		for (int i = 0; i < TileYCount; i++){ matchCountA[i] = 1; } 
 		RowOneMatchCount = 1;
-//		int j = 4;
+		//int j = 4;
 		RowOneWins = 0;
-		for(int j = 1; j < 5; j++){
+		//for(int j = 1; j < 5; j++){
+		for(int j = 4; j > 0; j--){
 			RowMatchCount[j] = 1;
-	//		int wins = 0;
+			//int wins = 0;
 
 			for(int i = 1; i < TileYCount; i++){
-	//			int j = Convert.ToInt32(Mathf.Ceil((TileXCount / 2)));
+				//int j = Convert.ToInt32(Mathf.Ceil((TileXCount / 2)));
 				nextSymbol = MatchRowArray2[j,i].gameObject.GetComponent<Renderer>().material.mainTexture;
 				currentSymbol = MatchRowArray2[j,0].gameObject.GetComponent<Renderer>().material.mainTexture;
-//				print(nextSymbol + "==" + currentSymbol); 
+				//print(nextSymbol + "==" + currentSymbol); 
 
 				if(currentSymbol == nextSymbol){
-	//				print("match happening at " + j);
-	//				RowOneMatchCount++;
+					//print("match happening at " + j);
+					//RowOneMatchCount++;
 					RowMatchCount[j]++;
-					//matchCount++;
-//					MatchRowArray2[j,0].gameObject.GetComponent<Renderer>().material.color = Color.red;
-//					MatchRowArray2[j,1].gameObject.GetComponent<Renderer>().material.color = Color.red;
-	//				if(RowOneMatchCount >=3){
+					matchCount++;
+					matchCountA[j]++;
+					//MatchRowArray2[j,0].gameObject.GetComponent<Renderer>().material.color = Color.red;
+					//MatchRowArray2[j,1].gameObject.GetComponent<Renderer>().material.color = Color.red;
+					//if(RowOneMatchCount >=3){
 					if(RowMatchCount[j] >= 3){
 						MatchRowArray2[j,0].gameObject.GetComponent<Renderer>().material.color = Color.red;
 						MatchRowArray2[j,1].gameObject.GetComponent<Renderer>().material.color = Color.red;
 						MatchRowArray2[j,i].gameObject.GetComponent<Renderer>().material.color = Color.red;
-	//					RowOneWins = (1000 * RowOneMatchCount) + (Convert.ToInt32((Mathf.Pow(2, (RowOneMatchCount - 3f)) * 1000f)));
-	//					RowOneWins = 1000 * RowOneMatchCount;
-						RowOneWins = RowOneWins + (1000 * RowMatchCount[j]);
+						//RowOneWins = (1000 * RowOneMatchCount) + (Convert.ToInt32((Mathf.Pow(2, (RowOneMatchCount - 3f)) * 1000f)));
+						//RowOneWins = 1000 * RowOneMatchCount;
+						//RowOneWins = RowOneWins + (1000 * RowMatchCount[j]);
+						matchCount = matchCount + RowMatchCount[j];
 						GameManagerScript.Wins = RowOneWins;
 					}
 				}
@@ -368,14 +374,19 @@ public class SpinSlotsScript : MonoBehaviour {
 				//print("");
 			}
 				
-//			print(" " + currentSymbol);
-	//		print("CountMatch = " + RowOneMatchCount);
-			print("CountMatch[" + j + "] = " + RowMatchCount[j]);
-			print("Wins = " + RowOneWins);
-	//		GameManagerScript.RowOneCount = RowOneMatchCount;
-			GameManagerScript.RowOneCount = RowMatchCount[j];
+			//print(" " + currentSymbol);
+			//print("CountMatch = " + RowOneMatchCount);
+			//print("CountMatch[" + j + "] = " + RowMatchCount[j]);
+
+			print("matchCountA[" + j + "] = " + matchCountA[j]);
+			if(matchCountA[j] > 2){RowOneWins = RowOneWins + (1000 * matchCountA[j]);}
+			//print("Wins = " + RowOneWins);
+			//GameManagerScript.RowOneCount = RowOneMatchCount;
+			//GameManagerScript.RowOneCount = RowMatchCount[j];
+			GameManagerScript.RowOneCount = matchCount;
 			GameManagerScript.Cash = GameManagerScript.Cash + RowOneWins;
-	//		}
+
+		//}
 		}
 	}
 
@@ -448,4 +459,6 @@ public class SpinSlotsScript : MonoBehaviour {
 }
 
 //#NOTE: Aug 25: One row match works well, but multi-line matching works a little janky. 
-// AUG28: Multi-line match working well but not the win count. Almost there, at least you have a fun game :)
+//AUG28: Multi-line match working well but not the win count. Almost there, at least you have a fun game :)
+//	   	* think its time to take the builds into a demo folder and all the new features going forward into the demo folder
+//	   	* once the pay matches the rows, publish, and total cleanup again for new features.	
